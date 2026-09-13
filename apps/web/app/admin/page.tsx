@@ -13,6 +13,7 @@ export default function AdminDashboardPage() {
   const [forms, setForms] = useState<Form[]>([]);
   const [searchUser, setSearchUser] = useState('');
   const [searchForm, setSearchForm] = useState('');
+  const [authorized, setAuthorized] = useState<boolean | null>(null); // null = sedang cek
 
   const [auditLogs, setAuditLogs] = useState<Array<{ id: string; action: string; user: string; time: string }>>([
     { id: '1', action: 'Formulir "Pendaftaran Event 2026" diterbitkan ke edge', user: 'Faris Alarkan', time: '10 menit lalu' },
@@ -22,10 +23,66 @@ export default function AdminDashboardPage() {
   ]);
 
   useEffect(() => {
+    // ── GUARD: cek role, tolak jika bukan admin ──
+    const role = DataStore.getCurrentRole();
+    if (role !== 'admin') {
+      setAuthorized(false);
+      return;
+    }
+    setAuthorized(true);
     setStats(DataStore.getPlatformStats());
     setUsers(DataStore.getAdminUsers());
     setForms(DataStore.getForms());
   }, []);
+
+  // ── Tampilan 403 jika bukan admin ──
+  if (authorized === null) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+        <span className="material-symbols-rounded" style={{ fontSize: 32, color: 'var(--ink-faint)', animation: 'spin 1s linear infinite' }}>progress_activity</span>
+      </div>
+    );
+  }
+
+  if (authorized === false) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '16px',
+        background: 'var(--bg)',
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        textAlign: 'center',
+        padding: '32px',
+      }}>
+        <div style={{
+          width: 72, height: 72, borderRadius: 20,
+          background: '#FFF0F0', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span className="material-symbols-rounded" style={{ fontSize: 36, color: '#E53935' }}>gpp_bad</span>
+        </div>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>Akses Ditolak</h1>
+        <p style={{ fontSize: 14, color: 'var(--ink-muted)', maxWidth: 360, lineHeight: 1.6, margin: 0 }}>
+          Halaman ini hanya dapat diakses oleh Administrator platform. Anda tidak memiliki izin untuk membuka area ini.
+        </p>
+        <a href="/dashboard" style={{
+          marginTop: 8,
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          padding: '10px 20px', borderRadius: 999,
+          background: 'var(--accent)', color: '#fff',
+          fontWeight: 700, fontSize: 14, textDecoration: 'none',
+        }}>
+          <span className="material-symbols-rounded" style={{ fontSize: 18 }}>arrow_back</span>
+          Kembali ke Dashboard
+        </a>
+      </div>
+    );
+  }
+
+
 
   const handleToggleSuspend = (userId: string) => {
     DataStore.toggleUserSuspended(userId);

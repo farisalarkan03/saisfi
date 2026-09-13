@@ -69,21 +69,7 @@ export const DashboardHeader: React.FC = () => {
           </Link>
         </nav>
 
-        {/* Admin nav — visually separated */}
-        <div className="admin-nav-section">
-          <div className="admin-nav-separator">
-            <span className="material-symbols-rounded admin-sep-icon">lock</span>
-          </div>
-          <nav className="admin-nav">
-            <Link
-              href="/admin"
-              className={`nav-link admin-link ${isActive('/admin') ? 'active-admin' : ''}`}
-            >
-              <span className="material-symbols-rounded">shield_person</span>
-              <span>Area Admin</span>
-            </Link>
-          </nav>
-        </div>
+        {/* Admin nav disembunyikan — akses hanya via URL langsung /admin */}
       </div>
 
       {/* ── RIGHT: Role switch + Profile ── */}
@@ -212,45 +198,7 @@ export const DashboardHeader: React.FC = () => {
           font-size: 17px;
         }
 
-        /* ── ADMIN SECTION ── */
-        .admin-nav-section {
-          display: flex;
-          align-items: center;
-          margin-left: 12px;
-          padding-left: 12px;
-          border-left: 1px dashed #D1C8F8;
-          gap: 6px;
-        }
-        .admin-nav-separator {
-          display: flex;
-          align-items: center;
-        }
-        .admin-sep-icon {
-          font-size: 13px;
-          color: #A78BFA;
-          opacity: 0.7;
-        }
-        .admin-nav {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-        .admin-link {
-          color: #7C6FAE;
-          background: #F5F3FF;
-          border: 1px solid #E9E4FF;
-        }
-        .admin-link:hover {
-          background: #EDE9FE;
-          color: #5B21B6;
-          border-color: #D8B4FE;
-        }
-        .admin-link.active-admin {
-          background: linear-gradient(135deg, #EDE9FE, #F5F3FF);
-          color: #4C1D95;
-          border-color: #C4B5FD;
-          box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
-        }
+        /* admin-nav-section dihapus — tidak ada link admin di header */
 
         /* ── RIGHT GROUP ── */
         .dash-right {
