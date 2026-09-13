@@ -190,9 +190,11 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="card-body">
-                    <h3 className="card-title" title={form.title}>
-                      {form.title}
-                    </h3>
+                    <Link href={`/builder/default?id=${form.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <h3 className="card-title" title={form.title} style={{ cursor: 'pointer' }}>
+                        {form.title}
+                      </h3>
+                    </Link>
                     <p className="card-desc">
                       {form.description || 'Tidak ada deskripsi'}
                     </p>
@@ -222,6 +224,16 @@ export default function DashboardPage() {
                         <span className="material-symbols-rounded" style={{ fontSize: '16px' }}>table_chart</span>
                         <span>Respons ({responses.length})</span>
                       </Link>
+
+                      <a
+                        href={`/f?slug=${encodeURIComponent(form.slug)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="icon-btn"
+                        title="Lihat / Pratinjau Formulir"
+                      >
+                        <span className="material-symbols-rounded" style={{ fontSize: '18px' }}>visibility</span>
+                      </a>
 
                       {isPub && (
                         <button

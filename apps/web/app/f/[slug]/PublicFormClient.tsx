@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { DataStore } from '@/lib/store';
 import { Form, Question } from '@/lib/types';
 
 export default function PublicFormPage() {
   const params = useParams();
-  const slug = params?.slug as string;
+  const searchParams = useSearchParams();
 
   const [form, setForm] = useState<Form | null>(null);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
@@ -18,11 +18,38 @@ export default function PublicFormPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
-    const found = DataStore.getFormBySlug(slug);
+    // 1. Coba dari query parameter (?slug= atau ?id=)
+    const qSlug = searchParams?.get('slug') || '';
+    const qId = searchParams?.get('id') || '';
+
+    // 2. Coba dari params route
+    const routeSlug = (params?.slug as string) || '';
+
+    // 3. Coba dari window.location.pathname
+    let pathSlug = '';
+    if (typeof window !== 'undefined') {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      if (parts[0] === 'f' && parts[1] && parts[1] !== 'default') {
+        pathSlug = parts[1];
+      }
+    }
+
+    const targetSlug = qSlug || pathSlug || (routeSlug !== 'default' ? routeSlug : '');
+
+    let found: Form | null = null;
+    if (targetSlug) {
+      found = DataStore.getFormBySlug(targetSlug);
+      if (!found) {
+        found = DataStore.getFormById(targetSlug);
+      }
+    }
+    if (!found && qId) {
+      found = DataStore.getFormById(qId);
+    }
+
     if (found) {
       setForm(found);
-      DataStore.incrementVisit(slug);
+      DataStore.incrementVisit(found.slug);
 
       // Apply theme to body
       const root = document.documentElement;
@@ -30,7 +57,7 @@ export default function PublicFormPage() {
       root.style.setProperty('--accent-ink', found.theme.accent_ink || '#2F32B8');
       root.style.setProperty('--accent-soft', found.theme.accent_soft || '#ECEDFF');
     }
-  }, [slug]);
+  }, [params, searchParams]);
 
   if (!form) {
     return (

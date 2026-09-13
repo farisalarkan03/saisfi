@@ -1,15 +1,7 @@
 import { Suspense } from 'react';
-import PublicFormClient from './PublicFormClient';
+import PublicFormClient from './[slug]/PublicFormClient';
 
-export function generateStaticParams() {
-  return [
-    { slug: 'pendaftaran-event' },
-    { slug: 'event-2026' },
-    { slug: 'default' },
-  ];
-}
-
-export default function PublicFormPage() {
+export default function PublicFormRootPage() {
   return (
     <Suspense
       fallback={

@@ -21,8 +21,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   if (!isOpen) return null;
 
   const publicUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/f/${slug}`
-    : `/f/${slug}`;
+    ? `${window.location.origin}/f?slug=${encodeURIComponent(slug)}`
+    : `/f?slug=${encodeURIComponent(slug)}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(publicUrl);

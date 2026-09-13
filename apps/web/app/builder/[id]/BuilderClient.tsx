@@ -104,7 +104,7 @@ export default function BuilderClient() {
 
   const handlePreview = () => {
     if (!form) return;
-    window.open(`/f/${form.slug}`, '_blank');
+    window.open(`/f?slug=${encodeURIComponent(form.slug)}`, '_blank');
   };
 
   if (!form) {
