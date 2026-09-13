@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { DataStore } from '@/lib/store';
 import { Form, QuestionType, FormTheme } from '@/lib/types';
 import { BuilderTopbar } from '@/components/builder/BuilderTopbar';
@@ -12,45 +12,35 @@ import { BuilderMobileNav, ActiveMobileTab } from '@/components/builder/BuilderM
 import { ShareModal } from '@/components/builder/ShareModal';
 
 export default function BuilderClient() {
-  const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Baca ID dari URL asli (window.location) agar benar saat Cloudflare
-  // merewrite dynamic route ke shell /builder/default/
-  const getActualFormId = (): string => {
-    if (typeof window !== 'undefined') {
-      const segments = window.location.pathname.replace(/\/$/, '').split('/');
-      const builderIdx = segments.indexOf('builder');
-      if (builderIdx !== -1 && segments[builderIdx + 1]) {
-        return segments[builderIdx + 1];
-      }
-    }
-    return (params?.id as string) || '';
-  };
-
-  const [formId, setFormId] = useState<string>((params?.id as string) || '');
+  // Baca ID dari query param ?id=form-xxx
+  // URL: /builder/default?id=form-1789293896280
+  // File HTML yang disajikan: /builder/default/index.html (selalu ada)
+  const [formId, setFormId] = useState<string>('');
   const [form, setForm] = useState<Form | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [mobileTab, setMobileTab] = useState<ActiveMobileTab>('canvas');
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [integrations, setIntegrations] = useState(form ? DataStore.getIntegrations(form.id) : []);
 
-  // Load form from store — baca ID aktual dari URL
+  // Load form dari store berdasarkan ?id=
   useEffect(() => {
-    const actualId = getActualFormId();
-    setFormId(actualId);
+    const qId = searchParams?.get('id') || '';
+    setFormId(qId);
 
-    if (!actualId) return;
-    let loaded = DataStore.getFormById(actualId);
+    let loaded = qId ? DataStore.getFormById(qId) : null;
     if (!loaded) {
-      // Form belum ada di store — fallback ke form pertama atau buat baru
       const forms = DataStore.getForms();
-      loaded = forms[0] || DataStore.createForm(actualId);
+      loaded = forms[0] || DataStore.createForm('Formulir Baru', qId || undefined);
     }
     setForm(loaded);
     setIntegrations(DataStore.getIntegrations(loaded.id));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
+
+
 
   // Apply theme tokens to root dynamically
   useEffect(() => {

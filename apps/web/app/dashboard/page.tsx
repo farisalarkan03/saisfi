@@ -27,7 +27,7 @@ export default function DashboardPage() {
     const title = prompt('Masukkan judul formulir baru:', 'Formulir Survei Baru');
     if (title && title.trim()) {
       const newForm = DataStore.createForm(title.trim());
-      router.push(`/builder/${newForm.id}`);
+      router.push(`/builder/default?id=${newForm.id}`);
     }
   };
 
@@ -201,7 +201,7 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="card-actions">
-                      <Link href={`/builder/${form.id}`} className="btn btn-primary btn-sm">
+                      <Link href={`/builder/default?id=${form.id}`} className="btn btn-primary btn-sm">
                         <span className="material-symbols-rounded" style={{ fontSize: '16px' }}>edit</span>
                         <span>Buka Builder</span>
                       </Link>

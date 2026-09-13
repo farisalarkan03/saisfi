@@ -10,10 +10,10 @@ export default function BuilderIndexPage() {
   useEffect(() => {
     const forms = DataStore.getForms();
     if (forms.length > 0) {
-      router.replace(`/builder/${forms[0].id}`);
+      router.replace(`/builder/default?id=${forms[0].id}`);
     } else {
       const newForm = DataStore.createForm();
-      router.replace(`/builder/${newForm.id}`);
+      router.replace(`/builder/default?id=${newForm.id}`);
     }
   }, [router]);
 
