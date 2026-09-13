@@ -32,7 +32,6 @@ export default function ResponsesPage() {
   // Export to CSV functionality
   const exportToCSV = () => {
     if (!form || responses.length === 0) {
-      alert('Belum ada respons untuk diekspor.');
       return;
     }
 

@@ -7,9 +7,11 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DataStore } from '@/lib/store';
 import { Form } from '@/lib/types';
 import { ShareModal } from '@/components/builder/ShareModal';
+import { AppDialog, useDialog } from '@/components/ui/AppDialog';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { dialog, closeDialog, showConfirm } = useDialog();
   const [forms, setForms] = useState<Form[]>([]);
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,16 +26,21 @@ export default function DashboardPage() {
   }, []);
 
   const handleCreateForm = () => {
-    const title = prompt('Masukkan judul formulir baru:', 'Formulir Survei Baru');
-    if (title && title.trim()) {
-      const newForm = DataStore.createForm(title.trim());
-      router.push(`/builder/default?id=${newForm.id}`);
-    }
+    // Langsung buat form baru dan arahkan ke builder tanpa modal/prompt
+    const newForm = DataStore.createForm('Formulir Baru');
+    router.push(`/builder/default?id=${newForm.id}`);
   };
 
-  const handleDeleteForm = (id: string, title: string, e: React.MouseEvent) => {
+  const handleDeleteForm = async (id: string, title: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm(`Hapus formulir "${title}" secara permanen?`)) {
+    const ok = await showConfirm({
+      title: 'Hapus Formulir?',
+      message: `Formulir "${title}" akan dihapus permanen dan tidak bisa dikembalikan.`,
+      icon: 'delete_forever',
+      confirmLabel: 'Hapus Permanen',
+      cancelLabel: 'Batal',
+    });
+    if (ok) {
       DataStore.deleteForm(id);
       setForms(DataStore.getForms());
     }
@@ -50,6 +57,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dash-layout">
+      <AppDialog config={dialog} onClose={closeDialog} />
       <DashboardHeader />
 
       <main className="dash-main">

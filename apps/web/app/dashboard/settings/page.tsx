@@ -40,7 +40,7 @@ export default function SettingsPage() {
               <div className="avatar-section">
                 <img src={profile.avatar_url || ''} alt="Avatar" className="avatar-img" />
                 <div>
-                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => alert('Fitur upload avatar terhubung ke Supabase Storage Bucket')}>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => {}}>
                     Ganti Foto
                   </button>
                   <p style={{ fontSize: '11.5px', color: 'var(--ink-faint)', marginTop: '4px' }}>

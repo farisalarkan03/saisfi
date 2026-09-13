@@ -57,8 +57,8 @@ export const BlockPalette: React.FC<BlockPaletteProps> = ({
       <div className="panel-label">STRUKTUR</div>
       <div className="block-list">
         <div
-          className="block-item"
-          onClick={() => alert('Fitur Multi-halaman siap diatur di Pengaturan Tata Letak (Satu per halaman)')}
+          className="block-item block-item--disabled"
+          title="Fitur Multi-halaman: diatur di Pengaturan Tata Letak (segera hadir)"
         >
           <div className="block-icon">
             <span className="material-symbols-rounded">splitscreen</span>
@@ -66,8 +66,8 @@ export const BlockPalette: React.FC<BlockPaletteProps> = ({
           <span className="block-name">Pemisah Halaman</span>
         </div>
         <div
-          className="block-item"
-          onClick={() => alert('Logika kondisional / percabangan tersedia pada paket Pro')}
+          className="block-item block-item--disabled"
+          title="Logika Cabang: tersedia pada paket Pro (segera hadir)"
         >
           <div className="block-icon">
             <span className="material-symbols-rounded">call_split</span>
@@ -121,6 +121,11 @@ export const BlockPalette: React.FC<BlockPaletteProps> = ({
         .block-item.active .block-icon {
           background: var(--accent);
           color: #fff;
+        }
+        .block-item--disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+          pointer-events: none;
         }
         .block-icon {
           width: 32px;

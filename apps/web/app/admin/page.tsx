@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DataStore } from '@/lib/store';
 import { Profile, Form, PlatformStats } from '@/lib/types';
+import { AppDialog, useDialog } from '@/components/ui/AppDialog';
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'forms' | 'logs'>('overview');
@@ -13,7 +14,8 @@ export default function AdminDashboardPage() {
   const [forms, setForms] = useState<Form[]>([]);
   const [searchUser, setSearchUser] = useState('');
   const [searchForm, setSearchForm] = useState('');
-  const [authorized, setAuthorized] = useState<boolean | null>(null); // null = sedang cek
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const { dialog, closeDialog, showConfirm } = useDialog();
 
   const [auditLogs, setAuditLogs] = useState<Array<{ id: string; action: string; user: string; time: string }>>([
     { id: '1', action: 'Formulir "Pendaftaran Event 2026" diterbitkan ke edge', user: 'Faris Alarkan', time: '10 menit lalu' },
@@ -104,8 +106,15 @@ export default function AdminDashboardPage() {
     setUsers(DataStore.getAdminUsers());
   };
 
-  const handleDeleteFormModeration = (formId: string, formTitle: string) => {
-    if (confirm(`Moderasi Admin: Hapus formulir "${formTitle}" dari platform?`)) {
+  const handleDeleteFormModeration = async (formId: string, formTitle: string) => {
+    const ok = await showConfirm({
+      title: 'Hapus Formulir dari Platform?',
+      message: `Moderasi Admin: Formulir "${formTitle}" akan dihapus permanen dari seluruh platform.`,
+      icon: 'admin_panel_settings',
+      confirmLabel: 'Hapus dari Platform',
+      cancelLabel: 'Batal',
+    });
+    if (ok) {
       DataStore.deleteForm(formId);
       setForms(DataStore.getForms());
       setStats(DataStore.getPlatformStats());
@@ -136,6 +145,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="admin-layout">
+      <AppDialog config={dialog} onClose={closeDialog} />
       <DashboardHeader />
 
       <main className="admin-main">
