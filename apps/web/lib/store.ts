@@ -225,9 +225,9 @@ export const DataStore = {
     return formWithMeta;
   },
 
-  createForm(title = 'Formulir Baru'): Form {
+  createForm(title = 'Formulir Baru', existingId?: string): Form {
     const user = this.getCurrentUser();
-    const id = 'form-' + Date.now();
+    const id = existingId || ('form-' + Date.now());
     const slug = slugify(title) + '-' + Math.random().toString(36).substring(2, 6);
 
     const newForm: Form = {

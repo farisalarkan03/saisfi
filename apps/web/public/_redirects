@@ -1,0 +1,13 @@
+# Cloudflare Pages _redirects
+# Rewrite semua dynamic route ke shell yang sudah di-prerender
+# Client-side Next.js akan baca URL asli via useParams()
+
+# Builder - semua form ID dinamis → shell /builder/default/
+/builder/*  /builder/default/index.html  200
+
+# Public form runner - semua slug dinamis → shell /f/event-2026/
+/f/*  /f/event-2026/index.html  200
+
+# Responses - semua form ID dinamis → shell responses
+/dashboard/forms/*/responses  /dashboard/forms/default/responses/index.html  200
+/dashboard/forms/*/responses/  /dashboard/forms/default/responses/index.html  200

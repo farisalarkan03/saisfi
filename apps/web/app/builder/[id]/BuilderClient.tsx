@@ -14,25 +14,43 @@ import { ShareModal } from '@/components/builder/ShareModal';
 export default function BuilderClient() {
   const params = useParams();
   const router = useRouter();
-  const formId = params?.id as string;
 
+  // Baca ID dari URL asli (window.location) agar benar saat Cloudflare
+  // merewrite dynamic route ke shell /builder/default/
+  const getActualFormId = (): string => {
+    if (typeof window !== 'undefined') {
+      const segments = window.location.pathname.replace(/\/$/, '').split('/');
+      const builderIdx = segments.indexOf('builder');
+      if (builderIdx !== -1 && segments[builderIdx + 1]) {
+        return segments[builderIdx + 1];
+      }
+    }
+    return (params?.id as string) || '';
+  };
+
+  const [formId, setFormId] = useState<string>((params?.id as string) || '');
   const [form, setForm] = useState<Form | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [mobileTab, setMobileTab] = useState<ActiveMobileTab>('canvas');
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [integrations, setIntegrations] = useState(form ? DataStore.getIntegrations(form.id) : []);
 
-  // Load form from store
+  // Load form from store — baca ID aktual dari URL
   useEffect(() => {
-    if (!formId) return;
-    let loaded = DataStore.getFormById(formId);
+    const actualId = getActualFormId();
+    setFormId(actualId);
+
+    if (!actualId) return;
+    let loaded = DataStore.getFormById(actualId);
     if (!loaded) {
+      // Form belum ada di store — fallback ke form pertama atau buat baru
       const forms = DataStore.getForms();
-      loaded = forms[0] || DataStore.createForm();
+      loaded = forms[0] || DataStore.createForm(actualId);
     }
     setForm(loaded);
     setIntegrations(DataStore.getIntegrations(loaded.id));
-  }, [formId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Apply theme tokens to root dynamically
   useEffect(() => {
