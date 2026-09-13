@@ -1,0 +1,13 @@
+name = "saisfi-submit-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+[vars]
+# SUPABASE_URL = "https://your-project.supabase.co"
+# TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+
+# Cloudflare KV for rate limiting per IP & Form
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "saisfi_ratelimit_kv_id"
+preview_id = "saisfi_ratelimit_kv_preview"

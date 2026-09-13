@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saisfi — Form Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,-50..200" />
+<style>
+  :root{
+    --bg: #F6F6FA;
+    --surface: #FFFFFF;
+    --surface-alt: #EFEFF5;
+    --line: rgba(29,29,31,0.07);
+    --ink: #1D1D1F;
+    --ink-muted: #6E6E73;
+    --ink-faint: #A2A2A8;
+    --accent: #5B5FEF;
+    --accent-ink: #2F32B8;
+    --accent-soft: #ECEDFF;
+    --accent-soft-2: #E1E3FF;
+    --shadow-ambient: 0 1px 2px rgba(29,29,31,0.04), 0 12px 28px -12px rgba(91,95,239,0.18);
+    --shadow-soft: 0 1px 2px rgba(29,29,31,0.05), 0 6px 16px -8px rgba(29,29,31,0.10);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --transition: 180ms cubic-bezier(.2,.8,.2,1);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .material-symbols-rounded{
+    font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 22;
+    font-size: 20px;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .app{
+    display: grid;
+    grid-template-rows: 68px 1fr;
+    height: 100vh;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 0 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    z-index: 5;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+  .brand-mark{
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(155deg, #6C6FFF 0%, #4A46E0 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 10px -3px rgba(91,95,239,0.55);
+  }
+  .brand-mark .material-symbols-rounded{ color:#fff; font-size:18px; }
+
+  .doc-meta{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-left: 6px;
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+  }
+  .doc-title{
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    padding: 6px 2px;
+    border-radius: 8px;
+  }
+  .doc-title:hover{ background: var(--surface-alt); }
+  .autosave{
+    display:flex; align-items:center; gap:5px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+  .autosave .material-symbols-rounded{ font-size:15px; color:#3DBE7A; }
+
+  .topbar-actions{ display:flex; align-items:center; gap:10px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  }
+  .btn:active{ transform: scale(0.96); }
+  .btn-ghost{
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover{ background: var(--surface-alt); }
+  .btn-primary{
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 14px -6px rgba(91,95,239,0.65);
+  }
+  .btn-primary:hover{ background: var(--accent-ink); }
+  .icon-btn{
+    width: 34px; height:34px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: background var(--transition), color var(--transition);
+  }
+  .icon-btn:hover{ background: var(--surface-alt); color: var(--ink); }
+
+  /* ---------- Layout body ---------- */
+  .body{
+    display:grid;
+    grid-template-columns: 260px 1fr 296px;
+    min-height:0;
+  }
+
+  .panel{
+    background: var(--surface);
+    overflow-y:auto;
+    padding: 20px 16px 40px;
+  }
+  .panel::-webkit-scrollbar{ width:0; }
+  .panel-left{ border-right: 1px solid var(--line); }
+  .panel-right{ border-left: 1px solid var(--line); }
+
+  .panel-label{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    padding: 4px 8px 12px;
+  }
+
+  .block-list{ display:flex; flex-direction:column; gap:4px; }
+  .block-item{
+    display:flex; align-items:center; gap:11px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    cursor: grab;
+    border: 1px solid transparent;
+    transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  }
+  .block-item:hover{ background: var(--surface-alt); }
+  .block-item.active{
+    background: var(--accent-soft);
+    border-color: var(--accent-soft-2);
+  }
+  .block-item.active .block-icon{ background: var(--accent); color:#fff; }
+  .block-icon{
+    width: 32px; height:32px;
+    border-radius: 9px;
+    background: var(--surface-alt);
+    color: var(--ink-muted);
+    display:flex; align-items:center; justify-content:center;
+    flex: none;
+    transition: background var(--transition), color var(--transition);
+  }
+  .block-name{ font-size: 13.5px; font-weight: 500; color: var(--ink); }
+
+  .divider{ height:1px; background: var(--line); margin: 16px 4px; }
+
+  /* ---------- Canvas ---------- */
+  .canvas-wrap{
+    overflow-y:auto;
+    padding: 36px 24px 80px;
+    display:flex;
+    justify-content:center;
+  }
+  .canvas-wrap::-webkit-scrollbar{ width:8px; }
+  .canvas-wrap::-webkit-scrollbar-thumb{ background: #DCDCE6; border-radius: 8px; }
+
+  .doc{
+    width: 100%;
+    max-width: 620px;
+    display:flex;
+    flex-direction:column;
+    gap: 16px;
+    animation: rise 520ms cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes rise{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .cover{
+    height: 132px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #8285FF 0%, #5B5FEF 55%, #4740D6 100%);
+    position: relative;
+    box-shadow: var(--shadow-ambient);
+    overflow:hidden;
+  }
+  .cover::after{
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(120% 90% at 15% 0%, rgba(255,255,255,0.35), transparent 55%);
+  }
+  .cover-badge{
+    position:absolute; top:14px; right:14px;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+    color:#fff;
+    font-size:11.5px; font-weight:600;
+    padding: 6px 11px;
+    border-radius: 999px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .cover-badge .material-symbols-rounded{ font-size:14px; }
+
+  .card{
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--line);
+  }
+
+  .form-head h1{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin: 0 0 8px;
+  }
+  .form-head p{
+    margin:0;
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height:1.55;
+  }
+
+  .q-card{ position: relative; transition: box-shadow var(--transition), border-color var(--transition); }
+  .q-card.selected{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-soft);
+  }
+  .q-top{
+    display:flex; align-items:flex-start; gap:12px;
+    margin-bottom: 16px;
+  }
+  .q-num{
+    flex:none;
+    width: 26px; height:26px;
+    border-radius: 8px;
+    background: var(--surface-alt);
+    color: var(--ink-muted);
+    font-size: 12px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    margin-top:1px;
+  }
+  .q-body{ flex:1; min-width:0; }
+  .q-label{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 3px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .q-required{ color:#EF5A5A; font-size:14px; }
+  .q-hint{ font-size: 12.5px; color: var(--ink-faint); margin:0; }
+  .q-type-chip{
+    flex:none;
+    display:flex; align-items:center; gap:5px;
+    font-size: 11.5px; font-weight:600;
+    color: var(--ink-muted);
+    background: var(--surface-alt);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .q-type-chip .material-symbols-rounded{ font-size:14px; }
+
+  .fake-input{
+    height: 42px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+  }
+  .fake-textarea{
+    height: 76px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+  }
+
+  .option-row{
+    display:flex; align-items:center; gap:10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    margin-bottom: 8px;
+  }
+  .option-row:last-child{ margin-bottom:0; }
+  .radio-dot{
+    width:18px; height:18px; border-radius:50%;
+    border: 2px solid #C9C9D3;
+    flex:none;
+  }
+  .radio-dot.on{
+    border-color: var(--accent);
+    background: radial-gradient(circle, var(--accent) 0 42%, transparent 44%);
+  }
+  .option-text{ font-size: 13.5px; color: var(--ink); }
+  .option-add{ font-size:13px; color: var(--ink-faint); padding: 4px 12px; }
+
+  .q-toolbar{
+    position:absolute;
+    right: 18px; top: -18px;
+    display:flex; align-items:center; gap:2px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .add-block-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding: 13px;
+    border-radius: var(--radius-lg);
+    border: 1.5px dashed #D2D2E0;
+    color: var(--ink-muted);
+    font-size: 13.5px; font-weight:600;
+    background: transparent;
+    cursor:pointer;
+    transition: border-color var(--transition), color var(--transition), background var(--transition);
+  }
+  .add-block-btn:hover{ border-color: var(--accent); color: var(--accent-ink); background: var(--accent-soft); }
+
+  /* ---------- Right panel ---------- */
+  .swatches{ display:flex; flex-wrap:wrap; gap:10px; padding: 2px 8px 4px; }
+  .swatch{
+    width: 30px; height:30px;
+    border-radius: 50%;
+    cursor:pointer;
+    border: 2px solid transparent;
+    position:relative;
+    transition: transform var(--transition);
+  }
+  .swatch:hover{ transform: scale(1.08); }
+  .swatch.selected{ border-color: var(--surface); box-shadow: 0 0 0 2px var(--swatch-color, var(--accent)); }
+  .swatch.selected::after{
+    content:'check';
+    font-family:'Material Symbols Rounded';
+    font-size:14px;
+    color:#fff;
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-variation-settings: 'wght' 600;
+  }
+
+  .field-group{ padding: 6px 8px 18px; }
+  .field-title{
+    font-size: 12px; font-weight:700;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+  .segmented{
+    display:flex;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    gap: 2px;
+  }
+  .segmented .seg{
+    flex:1;
+    text-align:center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    padding: 8px 6px;
+    border-radius: 8px;
+    cursor:pointer;
+    transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  }
+  .segmented .seg.active{
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .font-pill-row{ display:flex; flex-direction:column; gap:8px; }
+  .font-pill{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--line);
+    cursor:pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .font-pill.active{ border-color: var(--accent); background: var(--accent-soft); }
+  .font-pill .material-symbols-rounded{ color: var(--accent); font-size:18px; opacity:0; transition: opacity var(--transition); }
+  .font-pill.active .material-symbols-rounded{ opacity:1; }
+
+  .bg-thumbs{ display:flex; gap:10px; }
+  .bg-thumb{
+    flex:1;
+    height: 52px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--line);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color var(--transition);
+  }
+  .bg-thumb.active{ border-color: var(--accent); }
+  .bg-thumb .material-symbols-rounded{ color: var(--ink-faint); font-size:20px; }
+  .bg-thumb.active .material-symbols-rounded{ color: var(--accent); }
+  .bg-plain{ background: #fff; }
+  .bg-gradient{ background: linear-gradient(135deg,#8285FF,#4740D6); }
+  .bg-gradient .material-symbols-rounded{ color: rgba(255,255,255,0.85) !important; }
+  .bg-image{ background: var(--surface-alt); }
+
+  .integration-row{
+    display:flex; align-items:center; gap:11px;
+    padding: 10px 8px;
+    border-radius: var(--radius-md);
+    transition: background var(--transition);
+  }
+  .integration-row:hover{ background: var(--surface-alt); }
+  .integration-icon{
+    width:32px; height:32px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    flex:none;
+  }
+  .integration-name{ font-size:13px; font-weight:600; }
+  .integration-desc{ font-size:11.5px; color: var(--ink-faint); }
+  .toggle{
+    margin-left:auto;
+    width:36px; height:21px;
+    border-radius:999px;
+    background: var(--line);
+    position:relative;
+    flex:none;
+    cursor:pointer;
+    transition: background var(--transition);
+  }
+  .toggle::after{
+    content:'';
+    position:absolute; top:2px; left:2px;
+    width:17px; height:17px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform var(--transition);
+  }
+  .toggle.on{ background: var(--accent); }
+  .toggle.on::after{ transform: translateX(15px); }
+
+  @media (max-width: 980px) and (min-width: 761px){
+    .panel-left{ display:none; }
+    .body{ grid-template-columns: 1fr 280px; }
+  }
+
+  /* ---------- Mobile (phone) ---------- */
+  .mobile-nav{ display:none; }
+
+  @media (max-width: 760px){
+    body{ overflow:auto; }
+    .app{ grid-template-rows: 60px 1fr; height:100vh; height:100dvh; }
+
+    .topbar{ padding: 0 12px 0 14px; }
+    .brand{ font-size:0; gap:0; }
+    .brand-mark{ width:30px; height:30px; }
+    .doc-meta{ border-left:none; padding-left:10px; margin-left:8px; gap:8px; min-width:0; flex:1; }
+    .doc-title{ width:100% !important; font-size:14px; padding:6px 4px; }
+    .autosave{ display:none; }
+    .topbar-actions{ gap:4px; }
+    .topbar-actions .icon-btn{ display:none; }
+    .btn-ghost{ width:38px; height:38px; padding:0; border-radius:10px; justify-content:center; }
+    .btn-ghost span:last-child{ display:none; }
+    .btn-primary{ padding:9px 14px; font-size:13px; }
+
+    .body{
+      display:block;
+      position:relative;
+      height:calc(100% - 60px);
+      overflow:hidden;
+      padding-bottom: 70px;
+      padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    }
+
+    .panel-left, .panel-right, .canvas-wrap{
+      display:none;
+      width:100%;
+      height:100%;
+      border:none;
+    }
+    .panel-left.mobile-active, .panel-right.mobile-active{ display:block; }
+    .canvas-wrap.mobile-active{ display:flex; }
+
+    .panel{ padding: 16px 16px 32px; }
+    .panel-label{ font-size:12px; padding:6px 4px 14px; }
+
+    .block-item{ padding:14px 12px; }
+    .block-icon{ width:36px; height:36px; }
+    .block-name{ font-size:14.5px; }
+
+    .canvas-wrap{ padding: 18px 14px 40px; align-items:flex-start; }
+    .doc{ max-width:100%; gap:14px; }
+    .cover{ height:96px; border-radius: var(--radius-lg); }
+    .card{ padding:18px 16px; border-radius: var(--radius-md); }
+    .form-head h1{ font-size:21px; }
+    .form-head p{ font-size:13.5px; }
+
+    .q-toolbar{
+      position:static;
+      justify-content:flex-end;
+      background:transparent;
+      border:none;
+      box-shadow:none;
+      padding:0;
+      margin-bottom:10px;
+    }
+    .q-toolbar .icon-btn{ width:32px !important; height:32px !important; }
+
+    .swatch{ width:36px; height:36px; }
+    .font-pill{ padding:13px 14px; }
+    .segmented .seg{ padding:10px 6px; }
+    .bg-thumb{ height:58px; }
+    .integration-row{ padding:12px 8px; }
+    .toggle{ width:42px; height:25px; }
+    .toggle::after{ width:21px; height:21px; }
+    .toggle.on::after{ transform: translateX(17px); }
+
+    .mobile-nav{
+      display:flex;
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height:70px;
+      padding-bottom: env(safe-area-inset-bottom);
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      z-index: 30;
+    }
+    .mobile-nav-btn{
+      flex:1;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:3px;
+      background:none; border:none;
+      color: var(--ink-faint);
+      font-family:'Inter', sans-serif;
+      font-size:10.5px;
+      font-weight:600;
+      padding: 8px 0 4px;
+      cursor:pointer;
+      transition: color var(--transition);
+    }
+    .mobile-nav-btn .material-symbols-rounded{ font-size:23px; }
+    .mobile-nav-btn.active{ color: var(--accent); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center;">
+      <div class="brand">
+        <div class="brand-mark"><span class="material-symbols-rounded">draw</span></div>
+        Saisfi
+      </div>
+      <div class="doc-meta">
+        <input class="doc-title" value="Formulir Pendaftaran Event" style="width:210px;">
+        <span class="autosave"><span class="material-symbols-rounded">check_circle</span>Tersimpan otomatis</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn"><span class="material-symbols-rounded">undo</span></button>
+      <button class="icon-btn"><span class="material-symbols-rounded">redo</span></button>
+      <button class="btn btn-ghost"><span class="material-symbols-rounded" style="font-size:17px;">visibility</span>Pratinjau</button>
+      <button class="btn btn-primary"><span class="material-symbols-rounded" style="font-size:17px;">bolt</span>Terbitkan</button>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- LEFT: block palette -->
+    <div class="panel panel-left">
+      <div class="panel-label">TAMBAH BLOK</div>
+      <div class="block-list" id="blockList">
+        <div class="block-item active"><div class="block-icon"><span class="material-symbols-rounded">short_text</span></div><div class="block-name">Teks singkat</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">notes</span></div><div class="block-name">Paragraf</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">radio_button_checked</span></div><div class="block-name">Pilihan ganda</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">check_box</span></div><div class="block-name">Kotak centang</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">arrow_drop_down_circle</span></div><div class="block-name">Dropdown</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">calendar_month</span></div><div class="block-name">Tanggal</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">tag</span></div><div class="block-name">Angka</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">star</span></div><div class="block-name">Skala rating</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">upload_file</span></div><div class="block-name">Unggah file</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="panel-label">STRUKTUR</div>
+      <div class="block-list">
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">splitscreen</span></div><div class="block-name">Halaman baru</div></div>
+        <div class="block-item"><div class="block-icon"><span class="material-symbols-rounded">call_split</span></div><div class="block-name">Logika lompat</div></div>
+      </div>
+    </div>
+
+    <!-- CENTER: canvas -->
+    <div class="canvas-wrap">
+      <div class="doc">
+
+        <div class="cover">
+          <div class="cover-badge"><span class="material-symbols-rounded">visibility</span>128 kunjungan</div>
+        </div>
+
+        <div class="card form-head">
+          <h1>Pendaftaran Event</h1>
+          <p>Isi formulir di bawah untuk mendaftar. Data kamu hanya digunakan untuk keperluan acara ini.</p>
+        </div>
+
+        <div class="card q-card selected">
+          <div class="q-toolbar">
+            <button class="icon-btn" style="width:28px;height:28px;"><span class="material-symbols-rounded" style="font-size:16px;">content_copy</span></button>
+            <button class="icon-btn" style="width:28px;height:28px;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span></button>
+            <button class="icon-btn" style="width:28px;height:28px;"><span class="material-symbols-rounded" style="font-size:16px;">drag_indicator</span></button>
+          </div>
+          <div class="q-top">
+            <div class="q-num">1</div>
+            <div class="q-body">
+              <div class="q-label">Nama lengkap <span class="q-required">*</span></div>
+              <p class="q-hint">Sesuai KTP atau identitas resmi</p>
+            </div>
+            <div class="q-type-chip"><span class="material-symbols-rounded">short_text</span>Teks singkat</div>
+          </div>
+          <div class="fake-input"></div>
+        </div>
+
+        <div class="card q-card">
+          <div class="q-top">
+            <div class="q-num">2</div>
+            <div class="q-body">
+              <div class="q-label">Alamat email <span class="q-required">*</span></div>
+            </div>
+            <div class="q-type-chip"><span class="material-symbols-rounded">short_text</span>Teks singkat</div>
+          </div>
+          <div class="fake-input"></div>
+        </div>
+
+        <div class="card q-card">
+          <div class="q-top">
+            <div class="q-num">3</div>
+            <div class="q-body">
+              <div class="q-label">Pilih sesi acara <span class="q-required">*</span></div>
+            </div>
+            <div class="q-type-chip"><span class="material-symbols-rounded">radio_button_checked</span>Pilihan ganda</div>
+          </div>
+          <div class="option-row"><div class="radio-dot on"></div><div class="option-text">Sesi pagi — 09.00</div></div>
+          <div class="option-row"><div class="radio-dot"></div><div class="option-text">Sesi siang — 13.00</div></div>
+          <div class="option-row"><div class="radio-dot"></div><div class="option-text">Sesi sore — 16.00</div></div>
+          <div class="option-add">+ Tambah opsi</div>
+        </div>
+
+        <div class="card q-card">
+          <div class="q-top">
+            <div class="q-num">4</div>
+            <div class="q-body">
+              <div class="q-label">Ceritakan alasanmu ikut acara ini</div>
+            </div>
+            <div class="q-type-chip"><span class="material-symbols-rounded">notes</span>Paragraf</div>
+          </div>
+          <div class="fake-textarea"></div>
+        </div>
+
+        <button class="add-block-btn"><span class="material-symbols-rounded">add</span>Tambah pertanyaan</button>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: theme panel -->
+    <div class="panel panel-right">
+      <div class="panel-label">TEMA</div>
+
+      <div class="field-group">
+        <div class="field-title">Warna aksen</div>
+        <div class="swatches" id="swatches">
+          <div class="swatch selected" style="background:#5B5FEF; --swatch-color:#5B5FEF;" data-color="#5B5FEF" data-inkcolor="#2F32B8" data-soft="#ECEDFF"></div>
+          <div class="swatch" style="background:#FF7A59;" data-color="#FF7A59" data-inkcolor="#D65A3B" data-soft="#FFEDE7"></div>
+          <div class="swatch" style="background:#22B07D;" data-color="#22B07D" data-inkcolor="#178A61" data-soft="#E3F7EF"></div>
+          <div class="swatch" style="background:#F5A623;" data-color="#F5A623" data-inkcolor="#C9840F" data-soft="#FFF3DF"></div>
+          <div class="swatch" style="background:#EF5DA8;" data-color="#EF5DA8" data-inkcolor="#C93F87" data-soft="#FFE7F3"></div>
+          <div class="swatch" style="background:#1D1D1F;" data-color="#1D1D1F" data-inkcolor="#000000" data-soft="#EDEDED"></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-title">Tipe huruf</div>
+        <div class="font-pill-row">
+          <div class="font-pill active" data-font="'Plus Jakarta Sans', sans-serif">
+            <span style="font-family:'Plus Jakarta Sans'; font-weight:700; font-size:13.5px;">Jakarta Sans</span>
+            <span class="material-symbols-rounded">check_circle</span>
+          </div>
+          <div class="font-pill" data-font="'Inter', sans-serif">
+            <span style="font-family:'Inter'; font-weight:600; font-size:13.5px;">Inter</span>
+            <span class="material-symbols-rounded">check_circle</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-title">Tata letak</div>
+        <div class="segmented">
+          <div class="seg active">Satu per halaman</div>
+          <div class="seg">Semua tampil</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-title">Latar belakang</div>
+        <div class="bg-thumbs">
+          <div class="bg-thumb bg-plain active"><span class="material-symbols-rounded">check</span></div>
+          <div class="bg-thumb bg-gradient"><span class="material-symbols-rounded">gradient</span></div>
+          <div class="bg-thumb bg-image"><span class="material-symbols-rounded">image</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="panel-label">INTEGRASI</div>
+      <div class="integration-row">
+        <div class="integration-icon" style="background:#E7F7EF;"><span class="material-symbols-rounded" style="color:#22B07D; font-size:18px;">chat</span></div>
+        <div>
+          <div class="integration-name">Notifikasi WhatsApp</div>
+          <div class="integration-desc">Kabari tiap ada respons baru</div>
+        </div>
+        <div class="toggle on"></div>
+      </div>
+      <div class="integration-row">
+        <div class="integration-icon" style="background:#ECEDFF;"><span class="material-symbols-rounded" style="color:#5B5FEF; font-size:18px;">table_chart</span></div>
+        <div>
+          <div class="integration-name">Sinkron ke Sheets</div>
+          <div class="integration-desc">Ekspor respons otomatis</div>
+        </div>
+        <div class="toggle"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="mobile-nav">
+    <button class="mobile-nav-btn" data-target="blocks">
+      <span class="material-symbols-rounded">add_box</span>Blok
+    </button>
+    <button class="mobile-nav-btn active" data-target="canvas">
+      <span class="material-symbols-rounded">description</span>Formulir
+    </button>
+    <button class="mobile-nav-btn" data-target="theme">
+      <span class="material-symbols-rounded">palette</span>Tema
+    </button>
+  </div>
+</div>
+
+<script>
+  // Block palette selection
+  document.querySelectorAll('.block-item').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      document.querySelectorAll('.block-item').forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // Accent color swatches — live theme update
+  const root = document.documentElement;
+  document.querySelectorAll('.swatch').forEach(sw=>{
+    sw.addEventListener('click', ()=>{
+      document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+      sw.classList.add('selected');
+      root.style.setProperty('--accent', sw.dataset.color);
+      root.style.setProperty('--accent-ink', sw.dataset.inkcolor);
+      root.style.setProperty('--accent-soft', sw.dataset.soft);
+    });
+  });
+
+  // Font pills
+  document.querySelectorAll('.font-pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      document.querySelectorAll('.font-pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      document.querySelector('.form-head h1').style.fontFamily = p.dataset.font;
+    });
+  });
+
+  // Segmented control
+  document.querySelectorAll('.segmented .seg').forEach(seg=>{
+    seg.addEventListener('click', ()=>{
+      seg.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('active'));
+      seg.classList.add('active');
+    });
+  });
+
+  // Background thumbs
+  document.querySelectorAll('.bg-thumb').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.bg-thumb').forEach(x=>{ x.classList.remove('active'); x.innerHTML=''; });
+      t.classList.add('active');
+      t.innerHTML = '<span class="material-symbols-rounded">check</span>';
+    });
+  });
+
+  // Toggles
+  document.querySelectorAll('.toggle').forEach(tg=>{
+    tg.addEventListener('click', ()=> tg.classList.toggle('on'));
+  });
+
+  // Selecting a question card
+  document.querySelectorAll('.q-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('.q-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+
+  // Mobile bottom-nav: switch between Blok / Formulir / Tema as full-screen panels
+  const mobilePanels = {
+    blocks: document.querySelector('.panel-left'),
+    canvas: document.querySelector('.canvas-wrap'),
+    theme: document.querySelector('.panel-right'),
+  };
+  document.querySelectorAll('.mobile-nav-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.entries(mobilePanels).forEach(([key, el])=>{
+        el.classList.toggle('mobile-active', key === btn.dataset.target);
+      });
+    });
+  });
+  // Default view on mobile is the form canvas
+  mobilePanels.canvas.classList.add('mobile-active');
+</script>
+
+</body>
+</html>

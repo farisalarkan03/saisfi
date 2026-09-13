@@ -1,0 +1,7 @@
+name = "saisfi-dispatch-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+[vars]
+# WA_API_KEY = "your-fonnte-or-wa-key"
+# GOOGLE_SHEETS_CREDENTIALS = "{...}"
