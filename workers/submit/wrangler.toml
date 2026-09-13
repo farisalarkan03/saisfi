@@ -9,5 +9,5 @@ compatibility_date = "2024-09-01"
 # Cloudflare KV for rate limiting per IP & Form
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "saisfi_ratelimit_kv_id"
+id = "34f6f69b2b60489fb629f1c09c6166e7"
 preview_id = "saisfi_ratelimit_kv_preview"
