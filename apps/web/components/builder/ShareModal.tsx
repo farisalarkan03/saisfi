@@ -61,17 +61,18 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         </div>
 
         <div className="modal-actions">
-          <Link
-            href={`/f/${slug}`}
+          <a
+            href={`/f?slug=${encodeURIComponent(slug)}`}
             target="_blank"
+            rel="noreferrer"
             className="btn btn-ghost"
             style={{ width: '100%', justifyContent: 'center' }}
           >
             <span className="material-symbols-rounded">open_in_new</span>
             <span>Buka Formulir Publik</span>
-          </Link>
+          </a>
           <Link
-            href={`/dashboard/forms/${slug}/responses`}
+            href={`/dashboard/forms/default/responses?id=${encodeURIComponent(slug)}`}
             className="btn btn-ghost"
             style={{ width: '100%', justifyContent: 'center' }}
             onClick={onClose}

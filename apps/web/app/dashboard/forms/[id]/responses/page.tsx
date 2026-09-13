@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import ResponsesClient from './ResponsesClient';
 
 export function generateStaticParams() {
@@ -9,5 +10,15 @@ export function generateStaticParams() {
 }
 
 export default function ResponsesPage() {
-  return <ResponsesClient />;
+  return (
+    <Suspense
+      fallback={
+        <div style={{ padding: '60px', textAlign: 'center', color: 'var(--ink-muted)' }}>
+          Memuat respons formulir...
+        </div>
+      }
+    >
+      <ResponsesClient />
+    </Suspense>
+  );
 }

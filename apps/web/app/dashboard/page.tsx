@@ -217,7 +217,7 @@ export default function DashboardPage() {
                       </Link>
 
                       <Link
-                        href={`/dashboard/forms/${form.id}/responses`}
+                        href={`/dashboard/forms/default/responses?id=${form.id}`}
                         className="btn btn-ghost btn-sm"
                         title="Lihat Jawaban"
                       >

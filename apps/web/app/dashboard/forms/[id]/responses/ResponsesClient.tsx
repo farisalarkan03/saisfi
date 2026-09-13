@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DataStore } from '@/lib/store';
@@ -9,25 +9,52 @@ import { Form, FormResponse } from '@/lib/types';
 
 export default function ResponsesPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const formIdOrSlug = params?.id as string;
 
   const [form, setForm] = useState<Form | null>(null);
   const [responses, setResponses] = useState<FormResponse[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<FormResponse | null>(null);
   const [search, setSearch] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (!formIdOrSlug) return;
-    let found = DataStore.getFormById(formIdOrSlug);
-    if (!found) {
-      found = DataStore.getFormBySlug(formIdOrSlug);
+    // 1. Ambil dari query param ?id= atau ?slug=
+    const qId = searchParams?.get('id') || searchParams?.get('slug') || '';
+
+    // 2. Ambil dari params route
+    const routeId = (params?.id as string) || '';
+
+    // 3. Ambil dari window.location.pathname jika di client
+    let pathId = '';
+    if (typeof window !== 'undefined') {
+      const match = window.location.pathname.match(/\/dashboard\/forms\/([^/]+)\/responses/);
+      if (match && match[1] && match[1] !== 'default') {
+        pathId = match[1];
+      }
     }
+
+    const target = qId || pathId || (routeId !== 'default' ? routeId : '');
+
+    let found: Form | null = null;
+    if (target) {
+      found = DataStore.getFormById(target) || DataStore.getFormBySlug(target);
+    }
+
+    // Jika belum ditemukan atau ID adalah "default", fallback ke form pertama user jika ada
+    if (!found) {
+      const allForms = DataStore.getForms();
+      if (allForms.length > 0) {
+        found = allForms[0];
+      }
+    }
+
     if (found) {
       setForm(found);
       setResponses(DataStore.getResponses(found.id));
     }
-  }, [formIdOrSlug]);
+    setIsLoaded(true);
+  }, [params, searchParams]);
 
   // Export to CSV functionality
   const exportToCSV = () => {
@@ -67,8 +94,21 @@ export default function ResponsesPage() {
     return (
       <div className="layout">
         <DashboardHeader />
-        <div style={{ padding: '60px', textAlign: 'center', color: 'var(--ink-muted)' }}>
-          Memuat respons formulir...
+        <div style={{ padding: '80px 24px', textAlign: 'center', color: 'var(--ink-muted)' }}>
+          <span className="material-symbols-rounded" style={{ fontSize: '48px', color: 'var(--ink-faint)', marginBottom: '16px' }}>
+            quiz
+          </span>
+          <h2 style={{ fontSize: '20px', color: 'var(--ink)', marginBottom: '8px' }}>
+            {isLoaded ? 'Belum Ada Formulir yang Dipilih' : 'Memuat respons formulir...'}
+          </h2>
+          <p style={{ fontSize: '14px', marginBottom: '24px' }}>
+            {isLoaded ? 'Pilih formulir dari dashboard Anda untuk melihat jawaban responden.' : 'Mohon tunggu sebentar...'}
+          </p>
+          {isLoaded && (
+            <Link href="/dashboard" className="btn btn-primary" style={{ display: 'inline-flex' }}>
+              Kembali ke Dashboard
+            </Link>
+          )}
         </div>
       </div>
     );
@@ -93,14 +133,14 @@ export default function ResponsesPage() {
             <span>Kembali ke Formulir Saya</span>
           </Link>
           <div className="top-right-actions">
-            <Link href={`/builder/${form.id}`} className="btn btn-ghost btn-sm">
+            <Link href={`/builder/default?id=${form.id}`} className="btn btn-ghost btn-sm">
               <span className="material-symbols-rounded">edit</span>
               <span>Edit di Builder</span>
             </Link>
-            <Link href={`/f/${form.slug}`} target="_blank" className="btn btn-ghost btn-sm">
+            <a href={`/f?slug=${encodeURIComponent(form.slug)}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">
               <span className="material-symbols-rounded">open_in_new</span>
               <span>Buka Formulir Publik</span>
-            </Link>
+            </a>
             <button className="btn btn-primary btn-sm" onClick={exportToCSV}>
               <span className="material-symbols-rounded">download</span>
               <span>Ekspor CSV</span>

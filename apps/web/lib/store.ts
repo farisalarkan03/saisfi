@@ -288,8 +288,11 @@ export const DataStore = {
     return all.filter((r) => r.form_id === formId);
   },
 
-  submitResponse(slug: string, answersObj: Record<string, unknown>): { success: boolean; id: string } {
-    const form = this.getFormBySlug(slug);
+  submitResponse(slugOrId: string, answersObj: Record<string, unknown>): { success: boolean; id: string } {
+    let form = this.getFormBySlug(slugOrId);
+    if (!form) {
+      form = this.getFormById(slugOrId);
+    }
     if (!form) throw new Error('Formulir tidak ditemukan');
 
     const responseId = 'resp-' + Date.now();
